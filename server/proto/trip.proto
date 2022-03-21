@@ -1,0 +1,45 @@
+syntax = "proto3";
+package coolcar;
+option go_package="coolcar/proto/gen/go;trippb";//pb结尾
+
+message Location {
+    double latidue = 1;//第一个字断
+    double longitude = 2;
+}
+enum TripStatus {
+    //TS 缩写 TripStatus
+    TS_NOT_SPECIFEID = 0;
+    NOT_STARTED = 1;
+    IN_PROGRESS = 2;
+    FINISHED = 3;
+    PAID = 4;
+}
+
+message Trip { 
+    string start = 1;
+    Location start_pos = 2;
+    int64 duration_sec = 3;
+    int64 fee_cent = 4; 
+    repeated Location path_locations = 5;  
+    string end = 6;
+    Location end_pos = 7;
+    TripStatus status = 8;
+    bool has_duration_sec = 9;
+    bool isPromotionTrip = 10; // Yes
+    //bool isFromLoggedInUser = 11;//No
+    bool isFromGuestUser = 11;//Yes 0 零值 和过去之间的区别
+}
+//protoc -I=. --go_out=paths=source_relative:gen/go trip.proto
+
+message GetTripRequest {
+    string id =1;
+}
+
+message GetTripResponse{
+    string id = 1;
+    Trip trip =2;
+}
+
+service TripsService {
+     rpc GetTrip(GetTripRequest) returns (GetTripResponse) {}
+}
